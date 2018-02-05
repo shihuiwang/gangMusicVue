@@ -33,3 +33,4 @@ node_modules //npm install安装回来的库和插件
    --routes.js //项目路由配置文件
 -index.html //入口页面
 -webpack.config //webpack配置文件
+11221112
