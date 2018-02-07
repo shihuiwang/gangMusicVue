@@ -3,7 +3,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import indexPage from './components/header.vue';
 import homePage from './views/home.vue';
-import aboutPage from './views/about.vue';
+import personalCenter from './views/personalCenter.vue';
 import homeMusic from './views/music.vue';
 import homeVideo from './views/video.vue';
 import homeRadio from './views/radioStation.vue';
@@ -11,7 +11,7 @@ import homeRadio from './views/radioStation.vue';
 Vue.use(Router)
 
 export default new Router({
-    mode: 'history',
+    //mode: 'history',
     routes:[
         {
             path:'/',
@@ -36,8 +36,9 @@ export default new Router({
             ]
         },
         {
-            path:'/about',
-            component:aboutPage
+            path: '/personalCenter',
+            component: personalCenter,
+            name: 'personalCenter' //个人中心
         }
     ]
 })

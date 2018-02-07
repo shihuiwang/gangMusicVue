@@ -5,23 +5,40 @@
 	        <mt-button icon="i iconfont icon-sousuo" slot="right"></mt-button>
 	    </mt-header>
 	    <div class="header-main-icon-group">
-	        <i class="iconfont icon-yinle201"></i>
-	        <i class="iconfont icon-tubiaozhizuomoban active"></i>
-	        <i class="iconfont icon-yinle201"></i>
+	        <i class="iconfont icon-yinle201" v-on:click="personalCenter" v-bind:class="{active: isCenter}"></i>
+	        <i class="iconfont icon-tubiaozhizuomoban" v-on:click="home" v-bind:class="{active: isHome}"></i>
+	        <i class="iconfont icon-kehu" v-bind:class="{active: isDynamic}"></i>
 	    </div>
 	</div>
 </template>
 <script>
+	function changeTabState(_this,name) {
+		_this.isCenter = false;
+		_this.isHome = false;
+		_this.isDynamic = false;
+		_this[name] = true;
+	}
+
 	export default {
 		data () {
 			return {
-
+				isCenter: false,
+				isHome: true,
+				isDynamic: false
 			}
 		},
 		methods: {
 			openMenu() {
 				//console.log('点击了菜单按钮')
 				this.$emit('openMenu');
+			},
+			personalCenter() {
+				changeTabState(this,'isCenter');
+				this.$router.push('personalCenter');
+			},
+			home() {
+				changeTabState(this,'isHome');
+				this.$router.push('/');
 			}
 		}
 	}

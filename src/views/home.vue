@@ -19,7 +19,6 @@ export default {
   name: 'indexP',
   data () {
     return {
-       todos: this.eClick(),
         transitionName: 'slide-left',
         isMusic: true,
         isVideo: false,
@@ -27,9 +26,7 @@ export default {
     }
   },
   methods:{
-    eClick(){
-        console.log(9999);
-    }
+    
   },
     //监听路由的路径，可以通过不同的路径去选择不同的切换效果  
   watch: {  
