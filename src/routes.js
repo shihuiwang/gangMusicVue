@@ -7,6 +7,7 @@ import personalCenter from './views/personalCenter.vue';
 import homeMusic from './views/music.vue';
 import homeVideo from './views/video.vue';
 import homeRadio from './views/radioStation.vue';
+import friendsTrends from './views/friendsTrends.vue';
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ export default new Router({
             path: '/personalCenter',
             component: personalCenter,
             name: 'personalCenter' //个人中心
+        },
+        {
+            path: '/friendsTrends',
+            component: friendsTrends,
+            name: 'friendsTrends' //朋友动态
         }
     ]
 })

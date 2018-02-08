@@ -135,6 +135,7 @@
 				width: 100%;
 				line-height: 10%;
 				overflow: scroll;
+				&::-webkit-scrollbar {display:none}
 				ul.one,ul.two,ul.three {
 					text-align: left;
 					background-color: #fff;

@@ -7,7 +7,7 @@
 	    <div class="header-main-icon-group">
 	        <i class="iconfont icon-yinle201" v-on:click="personalCenter" v-bind:class="{active: isCenter}"></i>
 	        <i class="iconfont icon-tubiaozhizuomoban" v-on:click="home" v-bind:class="{active: isHome}"></i>
-	        <i class="iconfont icon-kehu" v-bind:class="{active: isDynamic}"></i>
+	        <i class="iconfont icon-kehu" v-on:click="friendsTrends" v-bind:class="{active: isDynamic}"></i>
 	    </div>
 	</div>
 </template>
@@ -39,17 +39,24 @@
 			home() {
 				changeTabState(this,'isHome');
 				this.$router.push('/');
+			},
+			friendsTrends() {
+				changeTabState(this,'isDynamic');
+				this.$router.push('friendsTrends');
 			}
 		}
 	}
 </script>
 <style lang="sass">
+div .mint-header.is-fixed {
+	z-index: 3;
+}
 	.header-main-icon-group {
 		top: 0;
 	    right: 90px;
 	    left: 90px;
 	    position: fixed;
-	    z-index: 1;
+	    z-index: 3;
 	    line-height: 40px;
 	    i.iconfont {
 			padding: 5px 10px;

@@ -31,6 +31,7 @@
 		width: 100%;
 		bottom: 0px;
 		text-align: left;
+		z-index: 2;
 		.footer-container {
 			background: #fff;
 			height: 34px;

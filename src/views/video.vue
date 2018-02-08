@@ -156,7 +156,7 @@
 				bottom: 0;
 				left: 0;
 				right: 0;
-				index: 1;
+				z-index: 1;
 				display: flex;
 				align-items: center;
 				justify-content: center;

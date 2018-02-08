@@ -37,8 +37,23 @@ export default {
   //监听路由的路径，可以通过不同的路径去选择不同的切换效果  
   watch: {  
     '$route' (to, from) {
-      if(to.path == '/personalCenter'){
+      if(from.path == '/personalCenter' && to.path == '/homeMusic'){  
+        this.transitionName = 'slide-left';
+      }
+      if(from.path === '/homeMusic' && to.path == '/personalCenter'){  
+        this.transitionName = 'slide-right';  
+      }
+      if(from.path === '/homeMusic' && to.path == '/friendsTrends'){  
+        this.transitionName = 'slide-left';  
+      }
+      if(from.path === '/friendsTrends' && to.path == '/homeMusic'){  
         this.transitionName = 'slide-right'; 
+      }
+      if(from.path === '/friendsTrends' && to.path == '/personalCenter'){  
+        this.transitionName = 'slide-right';
+      }
+      if(from.path === '/personalCenter' && to.path == '/friendsTrends'){  
+        this.transitionName = 'slide-left';  
       }  
     }  
   },

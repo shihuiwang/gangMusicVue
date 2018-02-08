@@ -11,6 +11,9 @@
     margin-bottom: -3px;
     border-left: 1px solid #26a2ff;
 }
+.left-anchor.not-before span:before {
+    display: none;
+}
 .song-sheet{
     display: flex;
     flex-direction: row;

@@ -31,7 +31,7 @@
 	    				<span>创建的歌单</span>
 	    				<span>(12)</span>
 	    			</p>
-	    			<i class="iconfont icon-shezhi"></i>
+	    			<i class="iconfont icon-shezhi" v-on:click="songAction('a')"></i>
 	    		</li>
 				<!-- 创建的歌单，手风琴张开效果的内容 -->
 	    		<li class="new-sheet" v-if="isOpen" v-for="item in songList">
@@ -51,7 +51,7 @@
 	    				<span>收藏的歌单</span>
 	    				<span>(1)</span>
 	    			</p>
-	    			<i class="iconfont icon-shezhi"></i>
+	    			<i class="iconfont icon-shezhi" v-on:click="songAction('b')"></i>
 	    		</li>
 	    		<!-- 创建的歌单，手风琴张开效果的内容 -->
 	    		<li class="new-sheet" v-if="isOpen1" v-for="item in colleList">
@@ -67,12 +67,17 @@
 				<!-- 歌单到这里结束—————————————————————— -->
 	    	</ul>
     	</div>
+    	<my-actionsheet :actions="actions" v-model="sheetVisible" cancelText=""></my-actionsheet>
     </div>
 </template>
 <script>
+	import myActionsheet from '../components/myMint/actionsheet.vue'
+	import { MessageBox } from 'mint-ui';
+
 	var newImgs = ['girls.jpeg','LUHAN.jpeg','xuanya.jpeg'];
 	var colleImgs = ['wangxinlin.jpeg'];
 	var names = ['我喜欢的音乐','2016-4','不知道什么歌'];
+	var actionThis = null;
 	function initSongSheet(ar) {
 		if(ar == 'new') {
 			var imgs = newImgs;
@@ -90,6 +95,24 @@
 		}
 		return list;
 	}
+	function actionCallback(e) {
+		console.log(e.id);
+		if(e.id == 'newSong') {
+			MessageBox.prompt('1','新建歌单').then(({ value, action }) => {
+			  	console.log(value,action);
+			  	if(action == 'confirm'){
+			  		if(value !='' && value !==null){
+			  			var item = {
+							url: '../src/assets/images/LUHAN.jpeg',
+							name: value,
+							num: 0
+						}
+						actionThis.songList.push(item);
+			  		}
+			  	}
+			});
+		}
+	}
 	export default {
 		data () {
 			return {
@@ -99,7 +122,9 @@
 				isOpen: true,
 				isClose: false,
 				isOpen1: true,
-				isClose1: false
+				isClose1: false,
+				actions: [],
+				sheetVisible: false
 			}
 		},
 		methods: {
@@ -122,7 +147,27 @@
 					this.isOpen1 = true;
 					this.isClose1 = false;
 				}
+			},
+			songAction(para) {
+				actionThis = this;
+				if(para == 'a'){
+					//创建歌单的操作列表
+					this.actions = [
+						{id: 'newSong', name: '创建新歌单', method: actionCallback, title: '创建的歌单', icon: 'icon-vip'},
+						{id: 'newSongManage', name: '歌单管理', method: actionCallback, icon: 'icon-916caidan_fenceng'}
+					]
+				}
+				if(para == 'b'){
+					//收藏歌单的操作列表
+					this.actions = [
+						{id: 'colleSongManage', name: '歌单管理', method: actionCallback, title: '收藏的歌单', icon: 'icon-916caidan_fenceng'}
+					]
+				}
+				this.sheetVisible = true;
 			}
+		},
+		components: {
+			myActionsheet
 		}
 	}
 </script>
@@ -159,7 +204,7 @@
 			text-align: left;
 			background-color: #ddd;
 			line-height: 25px;
-			font-size: 11px;
+			font-size: 13px;
 			li,li.new-sheet {
 				display: flex;
 				justify-content: space-between;
@@ -191,5 +236,11 @@
 			 	background-color: #ccc;
 			}
 		}
+	}
+	.mint-msgbox-message {
+		display: none;
+	}
+	.mint-msgbox-input input {
+		height: 30px;
 	}
 </style>
