@@ -153,14 +153,14 @@
 				if(para == 'a'){
 					//创建歌单的操作列表
 					this.actions = [
-						{id: 'newSong', name: '创建新歌单', method: actionCallback, title: '创建的歌单', icon: 'icon-vip'},
-						{id: 'newSongManage', name: '歌单管理', method: actionCallback, icon: 'icon-916caidan_fenceng'}
+						{id: 'newSong', name: '创建新歌单', method: actionCallback, title: '创建的歌单', icon: 'icon-tianjia'},
+						{id: 'newSongManage', name: '歌单管理', method: actionCallback, icon: 'icon-liebiao'}
 					]
 				}
 				if(para == 'b'){
 					//收藏歌单的操作列表
 					this.actions = [
-						{id: 'colleSongManage', name: '歌单管理', method: actionCallback, title: '收藏的歌单', icon: 'icon-916caidan_fenceng'}
+						{id: 'colleSongManage', name: '歌单管理', method: actionCallback, title: '收藏的歌单', icon: 'icon-liebiao'}
 					]
 				}
 				this.sheetVisible = true;

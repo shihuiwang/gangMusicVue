@@ -46,7 +46,7 @@
 		    			<span>{{item.comment}}</span>
 		    		</div>
 		    		<div class="comment">
-		    			<i class="iconfont icon-pinglun"></i>
+		    			<i class="iconfont icon-fenxiang"></i>
 		    			<span>{{item.shareNum}}</span>
 		    		</div>
 		    		<i class="iconfont icon-gengduoxiao"></i>
