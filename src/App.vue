@@ -18,6 +18,29 @@ import HeaderTab from './components/header.vue'
 import FooterNav from './components/footer.vue'
 import RightMenu from './components/menu.vue'
 import SongPlay from './components/songPlay.vue'
+
+    function initSongSheet(){
+        //生成模拟的歌曲数据
+        var imgSrc = ['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','7.jpg','8.jpg','9.jpg'];
+        var songerName = ['二珂 - 带着音乐去旅行','高野健一 - さくら','黑崎子 - 最美情侣（Cover 白小白）','金莎 - 最后一个夏天','锦零 - 春风吹（Cover 方大同）','井口裕香 - 白金ディスコ','谢春花 - 理想三旬 (Live)','周冬雨 - 不完美女孩','周子琰 - 全世界我最喜欢你'];
+        for (var i = 0, song = []; i <= imgSrc.length-1; i++) {
+            var num = Math.random()*9;
+            num = parseInt(num, 10);
+            var name = {
+                id: i, 
+                cover:'../src/assets/images/'+imgSrc[i],
+                num: num,
+                songer: songerName[i].split(' - ')[0],
+                name: songerName[i].split(' - ')[1]
+            }
+            if(i == 0) {
+                name.type = '推荐歌单';
+            }
+            song.push(name);
+        };
+        return song;
+    }
+
 export default {
   name: 'app',
   data () {
@@ -30,8 +53,9 @@ export default {
         },
         player: {
             top: '100%',
-            opa: 0
-        }
+            opa: 0,
+            songSheet: initSongSheet()
+        },
       
     }
   },
