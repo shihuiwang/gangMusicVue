@@ -1,15 +1,14 @@
 <template>
 	<div class="footer">
 	    <div class="footer-container">
-	    	<img :src="playingCoverImgUrl" alt="" @click="songPalyShow">
+	    	<img :src="currentSong.cover" alt="" @click="songPalyShow">
 	    	<div class="song-des" @click="songPalyShow">
-	    		<span class="song-name">理想三巡</span>
-	    		<span class="singer">邪春花</span>
+	    		<span class="song-name">{{currentSong.name}}</span>
+	    		<span class="singer">{{currentSong.songer}}</span>
 	    	</div>
 	    	<div class="play">
 	    		<i class="iconfont icon-iconset0481" @click="audioPlay" v-if="!playing"></i>
 	    		<i class="iconfont icon-plus-pause" @click="audioPause" v-if="playing"></i>
-	    		<audio id="footAudio" :src="audioSrc"></audio>
 	    	</div>
 	    	<div class="play-list">
 	    		<i class="iconfont icon-zhankaicaidan"></i>
@@ -19,58 +18,50 @@
 	</div>
 </template>
 <script>
-	window.onload = function(){
-		var footAudio = document.querySelector('#footAudio');
-		//监听事件
-		/*footAudio.oncanplay = function () {
-		    console.info('进入可播放状态,音频总长度:' + footAudio.duration);
-		}
-		footAudio.onplay = function () {
-		    console.info('开始播放：' + footAudio.currentTime);
-		}
-		footAudio.onpause = function () {
-			//歌曲播放完成后自动执行暂停
-		    console.info('暂停播放：' + footAudio.currentTime);
-		}
-		footAudio.onprogress = function () {
-		    console.info(footAudio.buffered);
-		    console.info('正在播放：' + footAudio.currentTime);
-		}*/
-	}
-	
-	
+	import Vue from 'vue'
 	export default {
+		props: ['player', 'playing'],
 		name: '',
 		data () {
 			return {
-				playingCoverImgUrl: '../src/assets/images/logo.png',
-				audioSrc: '../src/assets/audio/horse.ogg',//谢春花 - 理想三旬 (Live).mp3,
-				playing: false,
 				paused: false,
-				playProgress: 0
+				playProgress: 0,
+				currentSong: this.player.songSheet[0],
+				allSong: this.player.songSheet,
+				currentSongIndex: 0,
+				audioSrc: '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3',
 			}
 		},
 		methods: {
 			audioPlay() {
-				//var footAudio = document.querySelector('#footAudio');
-				footAudio.play();
-				this.playing = true;
-				var _this = this;
-				footAudio.ontimeupdate = function (e) {
-				    //console.info('播放时间发生改变：'+footAudio.currentTime);
-				    //console.info('播放进度：'+(footAudio.currentTime/footAudio.duration).toFixed(2)*100+'%');
-				    _this.playProgress = (footAudio.currentTime/footAudio.duration).toFixed(2)*100;
+				Vue.prototype.footPalying = true;
+				//向父组件广播播放事件
+				this.$emit('play','foot');
+				console.log('11c');
+				if(!globalAudio.src) {
+					globalAudio.src = this.audioSrc;
 				}
-				footAudio.onpause = function () {
+				globalAudio.play();
+				//this.playing = true;
+				var _this = this;
+				globalAudio.ontimeupdate = function (e) {
+				    //console.info('播放时间发生改变：'+globalAudio.currentTime);
+				    //console.info('播放进度：'+(globalAudio.currentTime/globalAudio.duration).toFixed(2)*100+'%');
+				    _this.playProgress = (globalAudio.currentTime/globalAudio.duration).toFixed(2)*100;
+				}
+				globalAudio.onpause = function () {
 					//歌曲播放完成后自动执行暂停
-				    //console.info('暂停播放：' + footAudio.currentTime);
-				    _this.playing = false;
+				    //console.info('暂停播放：' + globalAudio.currentTime);
+				    //_this.playing = false;
 				    _this.playProgress = 0;
 				}
 			},
 			audioPause() {
-				footAudio.pause();
-				this.playing = false;
+				//向父组件广播暂停事件
+				this.$emit('pause');
+
+				globalAudio.pause();
+				//this.playing = false;
 				this.paused = true;
 			},
 			songPalyShow() {
