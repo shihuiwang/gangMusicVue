@@ -1,22 +1,34 @@
+<!-- 播放器组件
+	接受参数：player: {}，播放器组件和页脚组件共用的数据对象，包含播放器显示隐藏属性，播放状态属性等
+	向上级组件传递的事件：
+						@songPaly="songPalyShow" //显示隐藏组件
+						@play="play" //播放音乐
+						@pause="pause"  //暂停音乐
+						@nextsong="nextSong" //下一首音乐
+        				@prevsong="prevSong"  //上一首音乐
+        				@playway="playWay" //播放方式
+-->
+
 <template>
 	<transition name="transitionName">
-		<div class="song-play-bg" @click="" :style="{top: player.top, opacity: player.opa, backgroundImage: 'url('+ currentSong.cover +')'}">
+		<div class="song-play-bg" @click="" :style="{top: player.top, opacity: player.opa, backgroundImage: 'url('+ player.currentSong.cover +')'}">
+			<div class="song-play-filter" :style="{backgroundImage: 'url('+ player.currentSong.cover +')'}"></div>
 			<div class="song-play">
 				<div class="song-play-head">
 					<div class="right">
 						<i class="iconfont icon-xitongfanhui" @click="songPalyHide"></i>
 						<div>
-							<p class="song-name">{{currentSong.name}}</p>
-							<p class="songer">{{currentSong.songer}}</p>
+							<p class="song-name">{{player.currentSong.name}}</p>
+							<p class="songer">{{player.currentSong.songer}}</p>
 						</div>
 					</div>
-					<i class="iconfont icon-iconfontzhizuobiaozhun20"></i>
+					<i class="iconfont icon-iconfontzhizuobiaozhun20" @click="shareFn"></i>
 				</div>
 				<div class="song-content">
 					<div class="stick" :style="{backgroundImage: 'url('+ stickBg +')', transform:'rotate('+ player.stickDeg +'deg)'}"></div>
 					<div class="disc-cylindrical">
 						<div class="disc-black-box" :class="{'anima-paused': player.playState}">
-							<div class="disc" :style="{backgroundImage: 'url('+ currentSong.cover +')'}" @click="getLyrics"></div>
+							<div class="disc" :style="{backgroundImage: 'url('+ player.currentSong.cover +')'}" @click="getLyrics"></div>
 						</div>
 					</div>
 					<div class="song-other-operate">
@@ -28,7 +40,7 @@
 					<i class="muted-handler iconfont" :class="mutedHandler" @click="mutedToggle"></i>
 				</div>
 				<div class="song-play-foot">
-					<i class="iconfont icon-fanhui-yuanshijituantubiao"></i>
+					<i class="iconfont" :class="playWayIcon" @click="playWay"></i>
 					<i class="iconfont icon-48shangyishou main-play-btn" @click="prevSong"></i>
 					<span class="play-btn">
 						<i class="iconfont icon-bofang" @click="playSong" v-if="player.playState"></i>
@@ -37,9 +49,9 @@
 					<i class="iconfont icon-49xiayishou main-play-btn" @click="nextSong"></i>
 					<i class="iconfont icon-zhankaicaidan"></i>
 					<div class="progress-group">
-						<span>{{currentTime}}</span>
-						<mt-progress :value="playProgress" :bar-height="1"></mt-progress>
-						<span>{{totalTime}}</span>
+						<span>{{player.currentTime}}</span>
+						<mt-progress :value="player.playProgress" :bar-height="1"></mt-progress>
+						<span>{{player.totalTime}}</span>
 						<div class="progress-circle"></div>
 					</div>
 					<!-- <audio id="songPlayAudio" :src="audioSrc"></audio> -->
@@ -52,122 +64,16 @@
 	import Vue from 'vue'
 	import { Toast } from 'mint-ui';
 
-	var totalTime = '00:00';
-	var songPlayAudio = Vue.prototype.globalAudio;
-/*
-	var ontimeupdate = function(_this) {
-		var _this = _this;
-		//console.info('播放时间发生改变：'+songPlayAudio.currentTime, songPlayAudio.duration);
-	    //console.info('播放进度：'+(footAudio.currentTime/footAudio.duration).toFixed(2)*100+'%');
-	    _this.playProgress = (songPlayAudio.currentTime/songPlayAudio.duration).toFixed(2)*100;
+	var playWayNum = 1;//播放方式 1列表播放，2单曲循环，3随机
 
-	    var all = songPlayAudio.currentTime.toFixed(2);
-		var time = (all/60).toFixed(1).split('.');
-		_this.currentTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
-	}
-
-	var onpause = function(_this) {
-		var _this = _this;
-		//console.info('暂停播放：' + footAudio.currentTime);
-	    _this.isPlaying = false;
-	    _this.playState = true;
-	    _this.player.stickDeg = '-15';
-	    if(songPlayAudio.duration <= songPlayAudio.currentTime){
-	    	_this.playProgress = 0;
-	    	//console.log(_this.player.songSheet,_this.player.songSheet.length);
-
-	    	//播放下一首歌曲
-	    	_this.currentSongIndex = _this.currentSongIndex + 1;
-	    	if(_this.currentSongIndex > _this.player.songSheet.length){
-	    		Toast({
-				  message: '列表歌曲已经全部播放',
-				  position: 'bottom',
-				  duration: 3000
-				});
-				return;
-	    	}
-	    	var currentSong = _this.player.songSheet[_this.currentSongIndex];
-	    	var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
-	    	_this.audioSrc = audioSrc;
-	    	_this.currentSong = currentSong;
-	    	setTimeout(() => {
-			    songPlayAudio.src = _this.audioSrc;
-			    songPlayAudio.play();
-			    songPlayAudio.ontimeupdate = function (e) {
-				    ontimeupdate(_this);
-				}
-				songPlayAudio.onpause = function () {
-					//歌曲播放完成后自动执行暂停
-				    onpause(_this);
-				}
-				songPlayAudio.onplay = function () {
-				    //console.info('开始播放：' + footAudio.currentTime);
-				    onplay(_this);
-				}
-			}, 200);
-	    	return;
-	    }
-	}
-
-	var onplay = function(_this) {
-		var _this = _this;
-		_this.player.stickDeg = '7';
-		_this.isPlaying = true;
-		_this.playState = false;
-		//获取不到总时长时要进行不断查询来获取时间
-		if(isNaN(songPlayAudio.duration)) {
-			_this.totalTime = '00:00';
-
-			var getTotalTime = function() {
-				if(songPlayAudio.duration == NaN) {
-					setTimeout(() => {
-						getTotalTime();
-					},100);
-				}
-				var all = songPlayAudio.duration.toFixed(2);
-	    		var time = (all/60).toFixed(1).split('.');
-	    		_this.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
-			}
-
-			setTimeout(() => {
-				getTotalTime();
-			},100);
-		}
-		else{
-			//正常获取总时长
-			var all = songPlayAudio.duration.toFixed(2);
-    		var time = (all/60).toFixed(1).split('.');
-    		_this.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
-		}
-	}*/
-
-	window.onload = function(){
-		var songPlayAudio = document.querySelector('#songPlayAudio');
-		/*songPlayAudio.oncanplay = function () {
-		    //console.info('进入可播放状态,音频总长度:' + songPlayAudio.duration);
-		    var all = songPlayAudio.duration.toFixed(2);
-		    var time = (all/60).toFixed(1).split('.');
-		    totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
-		}*/
-	}
 	export default {
 		props: ['player'],
 		data () {
 			return {
-				bgImg: '../src/assets/images/img5.jpg',
-				headerImg: '../src/assets/images/wanglihong.jpeg',
 				stickBg: '../src/assets/images/stickbg.png',
-				
-				
-				
-				currentSong: this.player.songSheet[0],
 				allSong: this.player.songSheet,
-				currentSongIndex: 0,
-				audioSrc: '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3',
-				totalTime: totalTime,
-				playProgress: 0,
-				currentTime: '00:00',
 				mutedHandler: 'icon-laba-xianxing',
+				playWayIcon: 'icon-fanhui-yuanshijituantubiao',
 			}
 		},
 		methods: {
@@ -175,6 +81,7 @@
 				//向父组件广播点击事件
 				this.$emit('songPaly');
 			},
+			//隐藏播放器
 			songPalyHide() {
 				this.player.top = '100%';
 				this.player.opa = 0;
@@ -182,140 +89,87 @@
 			playSong() {
 				//向父组件广播播放事件
 				this.$emit('play','song');
-				/*Vue.prototype.songPalying = true;
-				
-				console.log('11b');
-				songPlayAudio = Vue.prototype.globalAudio;
-				if(!songPlayAudio.src) {
-					songPlayAudio.src = this.audioSrc;
-				}
-				songPlayAudio.play();
-				var _this = this;
-				songPlayAudio.ontimeupdate = function (e) {
-				    ontimeupdate(_this);
-				}
-				songPlayAudio.onpause = function () {
-					//歌曲播放完成后自动执行暂停
-				    onpause(_this);
-				}
-				songPlayAudio.onplay = function () {
-				    //console.info('开始播放：' + footAudio.currentTime);
-				    onplay(_this);
-				}*/
 			},
 			pauseSong() {
-
 				//向父组件广播暂停事件
 				this.$emit('pause');
-
-				//songPlayAudio.pause();
 			},
+			//静音切换
 			mutedToggle() {
-				console.log(this.isPlaying);
-				if(songPlayAudio.muted){
-					songPlayAudio.muted = false;
+				if(Vue.prototype.globalAudio.muted){
+					Vue.prototype.globalAudio.muted = false;
 					this.mutedHandler = 'icon-laba-xianxing';
 				}
 				else{
-					songPlayAudio.muted = true;
+					Vue.prototype.globalAudio.muted = true;
 					this.mutedHandler = 'icon-mutejingyin blue';
 				}
 			},
 			//下一首
 			nextSong() {
-				//播放下一首歌曲
-				var _this = this;
-				_this.player.isPlaying = true;
-			    _this.player.playState = false;
-			    _this.player.stickDeg = '7';
-
-		    	_this.currentSongIndex = _this.currentSongIndex + 1;
-		    	if(_this.currentSongIndex >= _this.player.songSheet.length){
-		    		Toast({
-					  message: '列表歌曲已经全部播放',
-					  position: 'bottom',
-					  duration: 3000
-					});
-					return;
-		    	}
-		    	var currentSong = _this.player.songSheet[_this.currentSongIndex];
-		    	var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
-		    	_this.audioSrc = audioSrc;
-		    	_this.currentSong = currentSong;
-		    	setTimeout(() => {
-		    		songPlayAudio = Vue.prototype.globalAudio;
-		    		songPlayAudio.src = _this.audioSrc;
-				    songPlayAudio.play();
-					songPlayAudio.ontimeupdate = function (e) {
-					    ontimeupdate(_this);
-					}
-					songPlayAudio.onpause = function () {
-						//歌曲播放完成后自动执行暂停
-					    onpause(_this);
-					}
-					songPlayAudio.onplay = function () {
-					    //console.info('开始播放：' + footAudio.currentTime);
-					    onplay(_this);
-					}
-				}, 200);
+				//向父组件广播下一首歌曲事件
+				this.$emit('nextsong');
 			},
 			//上一首
 			prevSong() {
 				//播放上一首歌曲
-				var _this = this;
-				_this.player.isPlaying = true;
-			    _this.player.playState = false;
-			    _this.player.stickDeg = '7';
-
-		    	_this.currentSongIndex = _this.currentSongIndex - 1;
-		    	if(_this.currentSongIndex < 0){
-		    		Toast({
-					  message: '已经是第一首了',
-					  position: 'bottom',
-					  duration: 3000
-					});
-					return;
-		    	}
-		    	var currentSong = _this.player.songSheet[_this.currentSongIndex];
-		    	var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
-		    	_this.audioSrc = audioSrc;
-		    	_this.currentSong = currentSong;
-		    	setTimeout(() => {
-		    		songPlayAudio = Vue.prototype.globalAudio;
-		    		songPlayAudio.src = _this.audioSrc;
-				    songPlayAudio.play();
-				    songPlayAudio.ontimeupdate = function (e) {
-					    ontimeupdate(_this);
-					}
-					songPlayAudio.onpause = function () {
-						//歌曲播放完成后自动执行暂停
-					    onpause(_this);
-					}
-					songPlayAudio.onplay = function () {
-					    //console.info('开始播放：' + footAudio.currentTime);
-					    onplay(_this);
-					}
-				}, 200);
+				this.$emit('prevsong');
 			},
 			getLyrics() {
 				Toast('不要点了，米有歌词');
+			},
+			//播放列表的方式，单曲循环、列表循环，随机
+			playWay() {
+				playWayNum++;
+				this.$emit('playway',playWayNum);
+				if(playWayNum == 1){
+					this.playWayIcon = 'icon-fanhui-yuanshijituantubiao';
+					Toast('列表顺序播放');
+				}
+				if(playWayNum == 2){
+					this.playWayIcon = 'icon-danquxunhuan';
+					Toast('单曲循环');
+				}
+				if(playWayNum == 3){
+					this.playWayIcon = 'icon-icon--';
+					playWayNum = 0;
+					Toast('随机播放');
+				}
+			},
+			shareFn() {
+				Toast({
+				  message: '分享功能开发中,敬请期待',
+				  position: 'top',
+				  duration: 1000
+				});
 			}
 		}
 	}
 </script>
 <style lang="sass">
-	.song-play-bg, .song-play {
+	.song-play-filter {
+	    -webkit-filter: blur(10px);
+        -moz-filter: blur(10px);
+        -ms-filter: blur(10px);    
+        filter: blur(10px);	
+        background-color: rgba(141, 141, 141, 0.35);
+		background-blend-mode: darken;
+		background-size: 150% !important;
+	}
+	.song-play-bg, .song-play, .song-play-filter {
 		position: fixed;
 		height: 100%;
 		width: 100%;
 		z-index: 4;
 		background-size: cover;
 		background-position: center;
+		overflow: hidden;
+		background-color: rgba(171,165,165,0.9);
 		.song-play {
-			background-color: rgba(0,0,0,.8);
+			background-color: rgba(0,0,0,0);
 
 			.song-play-head {
-				background-color: rgba(171,165,165,.7);
+				background-color: rgba(171,165,165,0.5);
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
@@ -343,7 +197,7 @@
 				top: 44px;
 				bottom: 90px;
 				width: 100%;
-				background-color: rgba(171,165,165,.7);
+				background-color: rgba(171,165,165,0.3);
 				overflow: hidden;
 				.disc-cylindrical, .disc-black-box, .disc {
 					margin: 0 auto;
@@ -367,7 +221,7 @@
 					position: relative;
 					width: 240px;
 					height: 240px;
-					background-color: rgba(171,165,165,.8);
+					background-color: rgba(171,165,165,0.5);
 					margin-top: 80px;
 					.disc-black-box {
 						position: absolute;
@@ -412,7 +266,7 @@
 					padding: 0 10px;
 				}
 				.muted-handler.blue {
-					color: #26a2ff;
+					color: #e02433;
 				}
 			}
 
@@ -426,7 +280,7 @@
 				align-items: center;
 				padding: 0 15px;
 				box-sizing: border-box;
-				background-color: rgba(171,165,165,.7);
+				background-color: rgba(171,165,165,0.3);
 				.play-btn {
 					box-sizing: border-box;
 					border: 1px solid #fff;

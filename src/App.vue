@@ -7,11 +7,15 @@
                 <router-view class='router'></router-view>  
             </transition>
         </div>
-        <footer-nav ref="footplay" @songPaly="songPalyShow" 
-        :player="player"
-        @play="play" @pause="pause"></footer-nav>
+        <!-- 页脚播放组件，接受参数看源码文件 -->
+        <footer-nav ref="footplay" @songPaly="songPalyShow" :player="player" @play="play" @pause="pause"></footer-nav>
+
         <right-menu v-bind:action="action" v-on:toggleMenu="toggleMenu"></right-menu>
-        <song-play ref="songplay" :player="player" @songPaly="songPalyShow" @play="play" @pause="pause"></song-play>
+        <!-- 播放器组件，接受参数看源码文件 -->
+        <song-play ref="songplay" :player="player" 
+        @songPaly="songPalyShow" @play="play" @pause="pause" @nextsong="nextSong" 
+        @prevsong="prevSong" @playway="playWay"
+        ></song-play>
         <audio id="globalAudio"></audio>
     </div>
 </template>
@@ -22,16 +26,17 @@ import HeaderTab from './components/header.vue'
 import FooterNav from './components/footer.vue'
 import RightMenu from './components/menu.vue'
 import SongPlay from './components/songPlay.vue'
+import { Toast } from 'mint-ui';
     
     var ontimeupdate = function(_this) {
         var _this = _this;
         //console.info('播放时间发生改变：'+globalAudio.currentTime, globalAudio.duration);
         //console.info('播放进度：'+(footAudio.currentTime/footAudio.duration).toFixed(2)*100+'%');
-        _this.playProgress = (globalAudio.currentTime/globalAudio.duration).toFixed(2)*100;
+        _this.player.playProgress = (globalAudio.currentTime/globalAudio.duration).toFixed(2)*100;
 
         var all = globalAudio.currentTime.toFixed(2);
         var time = (all/60).toFixed(1).split('.');
-        _this.currentTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
+        _this.player.currentTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
     }
 
     var onpause = function(_this) {
@@ -41,11 +46,12 @@ import SongPlay from './components/songPlay.vue'
         _this.player.playState = true;
         _this.player.stickDeg = '-15';
         if(globalAudio.duration <= globalAudio.currentTime){
-            _this.playProgress = 0;
+            _this.player.playProgress = 0;
             //console.log(_this.player.songSheet,_this.player.songSheet.length);
 
             //播放下一首歌曲
-            _this.currentSongIndex = _this.currentSongIndex + 1;
+            getPlayWay(_this);
+            
             if(_this.currentSongIndex > _this.player.songSheet.length){
                 Toast({
                   message: '列表歌曲已经全部播放',
@@ -56,10 +62,9 @@ import SongPlay from './components/songPlay.vue'
             }
             var currentSong = _this.player.songSheet[_this.currentSongIndex];
             var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
-            _this.audioSrc = audioSrc;
-            _this.currentSong = currentSong;
+            _this.player.currentSong = currentSong;
             setTimeout(() => {
-                globalAudio.src = _this.audioSrc;
+                globalAudio.src = audioSrc;
                 globalAudio.play();
                 globalAudio.ontimeupdate = function (e) {
                     ontimeupdate(_this);
@@ -84,17 +89,17 @@ import SongPlay from './components/songPlay.vue'
         _this.player.playState = false;
         //获取不到总时长时要进行不断查询来获取时间
         if(isNaN(globalAudio.duration)) {
-            _this.totalTime = '00:00';
+            _this.player.totalTime = '00:00';
 
             var getTotalTime = function() {
-                if(globalAudio.duration == NaN) {
+                if(isNaN(globalAudio.duration)) {
                     setTimeout(() => {
                         getTotalTime();
                     },100);
                 }
                 var all = globalAudio.duration.toFixed(2);
                 var time = (all/60).toFixed(1).split('.');
-                _this.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
+                _this.player.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
             }
 
             setTimeout(() => {
@@ -105,26 +110,49 @@ import SongPlay from './components/songPlay.vue'
             //正常获取总时长
             var all = globalAudio.duration.toFixed(2);
             var time = (all/60).toFixed(1).split('.');
-            _this.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
+            _this.player.totalTime = (time[0]<10?('0' + time[0]):time[0]) + ':' + (time[1]<10?('0' + time[1]):time[1]);
         }
     }
+    var getPlayWay = function(_this, opera) {
+        //播放下一首歌曲
+        if(_this.playwaynum == 1){
+            //列表顺序播放
+            if(opera == 'prev') {
+                _this.currentSongIndex = _this.currentSongIndex - 1;
+            }
+            else{
+                _this.currentSongIndex = _this.currentSongIndex + 1;
+            }
+        }
+        else if(_this.playwaynum == 2){
+            //单曲循环
+            _this.currentSongIndex = _this.currentSongIndex;
+
+        }
+        else if(_this.playwaynum == 3){
+            //随机
+            var num = parseInt(Math.random()*9, 10);
+            _this.currentSongIndex = num;
+        }
+    }
+
     window.onload = function(){
         var globalAudio = document.querySelector('#globalAudio');
         Vue.prototype.globalAudio = globalAudio;
-        //监听事件
+        //可用的监听事件
         /*footAudio.oncanplay = function () {
-            console.info('进入可播放状态,音频总长度:' + footAudio.duration);
+            console.info('进入可播放状态,音频总长度:' + globalAudio.duration);
         }
         globalAudio.onplay = function () {
-            console.info('开始播放：' + footAudio.currentTime);
+            console.info('开始播放：' + globalAudio.currentTime);
         }
-        footAudio.onpause = function () {
+        globalAudio.onpause = function () {
             //歌曲播放完成后自动执行暂停
-            console.info('暂停播放：' + footAudio.currentTime);
+            console.info('暂停播放：' + globalAudio.currentTime);
         }
-        footAudio.onprogress = function () {
-            console.info(footAudio.buffered);
-            console.info('正在播放：' + footAudio.currentTime);
+        globalAudio.onprogress = function () {
+            console.info(globalAudio.buffered);
+            console.info('正在播放：' + globalAudio.currentTime);
         }*/
     }
     
@@ -177,9 +205,14 @@ export default {
             stickDeg: '-15',
             isPlaying: false,
             playState: true,
+            playProgress: 0,
+            totalTime: '00:00',
+            currentTime: '00:00',
+            currentSong: initSongSheet()[0],
         },
         playing: false,
-        //audioSrc: '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3',
+        currentSongIndex: 0,
+        playwaynum: 1,
     }
   },
   components:{
@@ -234,26 +267,9 @@ export default {
         },
         play(para) {
             this.playing = true;
-            console.log('11a',para);
-            /*if(para == 'song') {
-                if(!Vue.prototype.footPalying){
-                   this.$refs.footplay.audioPlay(); 
-                }
-            }
-            else if(para == 'foot'){
-                if(!Vue.prototype.songPalying){
-                    this.$refs.songplay.playSong(); 
-                }
-            }*/
-            //Vue.prototype.songPalying = true;
-            //向父组件广播播放事件
-            //this.$emit('play','song');
-            //console.log('11b');
-            //globalAudio  = Vue.prototype.globalAudio;
             if(!globalAudio.src) {
                 globalAudio.src = '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3';
             }
-            console.log(globalAudio,globalAudio.src);
             globalAudio.play();
             var _this = this;
             globalAudio.ontimeupdate = function (e) {
@@ -269,12 +285,90 @@ export default {
             }
         },
         pause() {
-            console.log('暂停');
+            globalAudio.pause();
+
             this.playing = false;
 
             this.player.stickDeg = '-15';
             this.player.isPlaying = false;
             this.player.playState = true;
+        },
+        nextSong() {
+            var _this = this
+            this.player.isPlaying = true;
+            this.player.playState = false;
+            this.player.stickDeg = '7';
+
+            getPlayWay(_this);
+            if(this.currentSongIndex >= this.player.songSheet.length){
+                //如果播放列表已经播放完毕则提示和固定下标防止超出播放列表长度而报错
+                this.currentSongIndex = this.player.songSheet.length-1;
+                Toast({
+                  message: '列表歌曲已经全部播放',
+                  position: 'bottom',
+                  duration: 3000
+                });
+            }
+            else{
+                var currentSong = this.player.songSheet[this.currentSongIndex];
+                var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+                this.player.currentSong = currentSong;
+                setTimeout(() => {
+                    globalAudio.src = audioSrc;
+                    globalAudio.play();
+                    globalAudio.ontimeupdate = function (e) {
+                        ontimeupdate(_this);
+                    }
+                    globalAudio.onpause = function () {
+                        //歌曲播放完成后自动执行暂停
+                        onpause(_this);
+                    }
+                    globalAudio.onplay = function () {
+                        //console.info('开始播放：' + footAudio.currentTime);
+                        onplay(_this);
+                    }
+                }, 200);
+            }
+            
+        },
+        prevSong() {
+            var _this = this
+            this.player.isPlaying = true;
+            this.player.playState = false;
+            this.player.stickDeg = '7';
+            if(this.currentSongIndex >= this.player.songSheet.length-1) {
+                this.currentSongIndex = this.player.songSheet.length-1;
+            }
+            getPlayWay(_this, 'prev');
+            if(this.currentSongIndex < 0){
+                Toast({
+                  message: '已经是第一首了',
+                  position: 'bottom',
+                  duration: 3000
+                });
+                return;
+            }
+            var currentSong = this.player.songSheet[this.currentSongIndex];
+            var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+            this.player.currentSong = currentSong;
+            setTimeout(() => {
+                globalAudio.src =audioSrc;
+                globalAudio.play();
+                globalAudio.ontimeupdate = function (e) {
+                    ontimeupdate(_this);
+                }
+                globalAudio.onpause = function () {
+                    //歌曲播放完成后自动执行暂停
+                    onpause(_this);
+                }
+                globalAudio.onplay = function () {
+                    //console.info('开始播放：' + footAudio.currentTime);
+                    onplay(_this);
+                }
+            }, 200);
+        },
+        playWay(way) {
+            this.playwaynum = way;
         }
     }
 }

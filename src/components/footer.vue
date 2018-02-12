@@ -1,20 +1,28 @@
+<!-- 播放器组件
+	接受参数：player: {}，播放器组件和页脚组件共用的数据对象，包含播放器显示隐藏属性，播放状态属性等
+	向上级组件传递的事件：
+						@songPaly="songPalyShow" //显示隐藏组件
+						@play="play" //播放音乐
+						@pause="pause"  //暂停音乐
+-->
+
 <template>
 	<div class="footer">
 	    <div class="footer-container">
-	    	<img :src="currentSong.cover" alt="" @click="songPalyShow">
+	    	<img :src="player.currentSong.cover" alt="" @click="songPalyShow">
 	    	<div class="song-des" @click="songPalyShow">
-	    		<span class="song-name">{{currentSong.name}}</span>
-	    		<span class="singer">{{currentSong.songer}}</span>
+	    		<span class="song-name">{{player.currentSong.name}}</span>
+	    		<span class="singer">{{player.currentSong.songer}}</span>
 	    	</div>
 	    	<div class="play">
-	    		<i class="iconfont icon-iconset0481" @click="audioPlay" v-if="!playing"></i>
-	    		<i class="iconfont icon-plus-pause" @click="audioPause" v-if="playing"></i>
+	    		<i class="iconfont icon-iconset0481" @click="audioPlay" v-if="player.playState"></i>
+	    		<i class="iconfont icon-plus-pause" @click="audioPause" v-if="!player.playState"></i>
 	    	</div>
 	    	<div class="play-list">
 	    		<i class="iconfont icon-zhankaicaidan"></i>
 	    	</div>
 	    </div>
-	    <mt-progress :value="playProgress" :bar-height="1"></mt-progress>
+	    <mt-progress :value="player.playProgress" :bar-height="1"></mt-progress>
 	</div>
 </template>
 <script>
@@ -24,45 +32,17 @@
 		name: '',
 		data () {
 			return {
-				paused: false,
-				playProgress: 0,
-				currentSong: this.player.songSheet[0],
-				allSong: this.player.songSheet,
-				currentSongIndex: 0,
-				audioSrc: '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3',
+				
 			}
 		},
 		methods: {
 			audioPlay() {
-				Vue.prototype.footPalying = true;
 				//向父组件广播播放事件
 				this.$emit('play','foot');
-				console.log('11c');
-				if(!globalAudio.src) {
-					globalAudio.src = this.audioSrc;
-				}
-				globalAudio.play();
-				//this.playing = true;
-				var _this = this;
-				globalAudio.ontimeupdate = function (e) {
-				    //console.info('播放时间发生改变：'+globalAudio.currentTime);
-				    //console.info('播放进度：'+(globalAudio.currentTime/globalAudio.duration).toFixed(2)*100+'%');
-				    _this.playProgress = (globalAudio.currentTime/globalAudio.duration).toFixed(2)*100;
-				}
-				globalAudio.onpause = function () {
-					//歌曲播放完成后自动执行暂停
-				    //console.info('暂停播放：' + globalAudio.currentTime);
-				    //_this.playing = false;
-				    _this.playProgress = 0;
-				}
 			},
 			audioPause() {
 				//向父组件广播暂停事件
 				this.$emit('pause');
-
-				globalAudio.pause();
-				//this.playing = false;
-				this.paused = true;
 			},
 			songPalyShow() {
 				//向父组件广播点击事件
