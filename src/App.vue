@@ -8,14 +8,15 @@
             </transition>
         </div>
         <!-- 页脚播放组件，接受参数看源码文件 -->
-        <footer-nav ref="footplay" @songPaly="songPalyShow" :player="player" @play="play" @pause="pause"></footer-nav>
+        <footer-nav ref="footplay" @songPaly="songPalyShow" :player="player" @play="play" @pause="pause" @playSheet="showPlaySheet"></footer-nav>
 
         <right-menu v-bind:action="action" v-on:toggleMenu="toggleMenu"></right-menu>
         <!-- 播放器组件，接受参数看源码文件 -->
         <song-play ref="songplay" :player="player" 
         @songPaly="songPalyShow" @play="play" @pause="pause" @nextsong="nextSong" 
-        @prevsong="prevSong" @playway="playWay"
+        @prevsong="prevSong" @playway="playWay" @playSheet="showPlaySheet"
         ></song-play>
+        <play-sheet :playesheet="playesheet" :currentindex="currentSongIndex" @playsong="play"></play-sheet>
         <audio id="globalAudio"></audio>
     </div>
 </template>
@@ -26,6 +27,7 @@ import HeaderTab from './components/header.vue'
 import FooterNav from './components/footer.vue'
 import RightMenu from './components/menu.vue'
 import SongPlay from './components/songPlay.vue'
+import PlaySheet from './components/playSheet.vue'
 import { Toast } from 'mint-ui';
     
     var ontimeupdate = function(_this) {
@@ -131,7 +133,7 @@ import { Toast } from 'mint-ui';
         }
         else if(_this.playwaynum == 3){
             //随机
-            var num = parseInt(Math.random()*9, 10);
+            var num = parseInt(Math.random()*_this.player.songSheet.length, 10);
             _this.currentSongIndex = num;
         }
     }
@@ -210,6 +212,12 @@ export default {
             currentTime: '00:00',
             currentSong: initSongSheet()[0],
         },
+        playesheet: {
+            top: '100%',
+            opa: 0,
+            songSheet: initSongSheet(),
+            currentSong: initSongSheet()[0],
+        },
         playing: false,
         currentSongIndex: 0,
         playwaynum: 1,
@@ -219,7 +227,8 @@ export default {
     HeaderTab,
     FooterNav,
     RightMenu,
-    SongPlay
+    SongPlay,
+    PlaySheet
   },
   //监听路由的路径，可以通过不同的路径去选择不同的切换效果  
   watch: {  
@@ -269,6 +278,15 @@ export default {
             this.playing = true;
             if(!globalAudio.src) {
                 globalAudio.src = '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3';
+            }
+            if(!isNaN(para)){
+                //如果参数为数字，则是指定播放播放列表里的对应歌曲
+                this.currentSongIndex = para;
+                var currentSong = this.player.songSheet[para];
+                var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+                this.player.currentSong = currentSong;
+                globalAudio.src = audioSrc;
+
             }
             globalAudio.play();
             var _this = this;
@@ -369,6 +387,10 @@ export default {
         },
         playWay(way) {
             this.playwaynum = way;
+        },
+        showPlaySheet() {
+            this.playesheet.top = '0';
+            this.playesheet.opa = 1;
         }
     }
 }
@@ -396,7 +418,7 @@ export default {
         width: 80%;  
         transition: all .5s ease;  
     }
-    .song-play-bg {
+    .song-play-bg, .play-sheet-bg {
         transition: all .3s ease; 
     }
     .slide-left-enter,  

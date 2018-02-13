@@ -7,6 +7,7 @@
 						@nextsong="nextSong" //下一首音乐
         				@prevsong="prevSong"  //上一首音乐
         				@playway="playWay" //播放方式
+        				@playSheet="showPlaySheet" //显示隐藏播放列表组件
 -->
 
 <template>
@@ -47,7 +48,7 @@
 						<i class="iconfont icon-zanting" @click="pauseSong" v-if="!player.playState"></i>
 					</span>
 					<i class="iconfont icon-49xiayishou main-play-btn" @click="nextSong"></i>
-					<i class="iconfont icon-zhankaicaidan"></i>
+					<i class="iconfont icon-zhankaicaidan" @click="showPlaySheet"></i>
 					<div class="progress-group">
 						<span>{{player.currentTime}}</span>
 						<mt-progress :value="player.playProgress" :bar-height="1"></mt-progress>
@@ -142,6 +143,9 @@
 				  position: 'top',
 				  duration: 1000
 				});
+			},
+			showPlaySheet() {
+				this.$emit('playSheet');
 			}
 		}
 	}

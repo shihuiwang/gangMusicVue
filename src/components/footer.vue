@@ -4,6 +4,7 @@
 						@songPaly="songPalyShow" //显示隐藏组件
 						@play="play" //播放音乐
 						@pause="pause"  //暂停音乐
+						@playSheet="showPlaySheet" //显示隐藏播放列表组件
 -->
 
 <template>
@@ -18,7 +19,7 @@
 	    		<i class="iconfont icon-iconset0481" @click="audioPlay" v-if="player.playState"></i>
 	    		<i class="iconfont icon-plus-pause" @click="audioPause" v-if="!player.playState"></i>
 	    	</div>
-	    	<div class="play-list">
+	    	<div class="play-list" @click="showPlaySheet">
 	    		<i class="iconfont icon-zhankaicaidan"></i>
 	    	</div>
 	    </div>
@@ -47,6 +48,9 @@
 			songPalyShow() {
 				//向父组件广播点击事件
 				this.$emit('songPaly');
+			},
+			showPlaySheet() {
+				this.$emit('playSheet');
 			}
 		}
 	}

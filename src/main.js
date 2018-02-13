@@ -14,7 +14,7 @@ Vue.config.debug = true;//开启错误提示
 Vue.use(MintUI)
 
 new Vue({
-        router,
+        router: router,
         el: '#appIndex',
         render: h => h(App)
 })
