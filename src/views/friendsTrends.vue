@@ -63,6 +63,8 @@
 	</div>
 </template>
 <script>
+	import Vue from 'vue'
+	
 	var imgSrc = ['wangfei.jpeg','wangxinlin.jpeg','xuanya.jpeg','xuezhiqian.jpeg','music1.jpeg'];
 	function initTrendsData(imgSrcs,_this){
 		if(imgSrcs != undefined){
@@ -84,13 +86,13 @@
 			var desArr = ['曾经等你下课的人，现在带你回家了吗？','《放假在家不被爸妈嫌弃攻略》','《声临其境》中，唐国强完美诠释了一个演员的自我修养','当一个活着回来的少年','当房东的猫遇上动漫，看完你想去狗带吗？'];
 			var name = {
 				id: i, 
-				src:'../src/assets/images/'+imgSrc[i],
+				src:Vue.prototype.staticSource+'images/'+imgSrc[i],
 				num: num,
 				praiseNum: parseInt(num/99),
 				comment: parseInt(num/988),
 				shareNum: parseInt(num/50),
 				uploader: uploaders[index],
-				uploaderPic: '../src/assets/images/' + uploaderPics[index],
+				uploaderPic: Vue.prototype.staticSource+'images/' + uploaderPics[index],
 				time: '03:58',
 				des: desArr[index],
 				type: trendType, //暂时保留的无用字段
@@ -108,7 +110,7 @@
 
 	function topicInit(){
 		for (var i = 4, imgs = []; i <= 10; i++) {
-			var name = {id: i, src:'../src/assets/images/yinyue'+i+'.jpeg'}
+			var name = {id: i, src:Vue.prototype.staticSource+'images/yinyue'+i+'.jpeg'}
 			imgs.push(name);
 		};
 		return imgs;
@@ -116,7 +118,7 @@
 	export default {
 		data () {
 			return {
-				img: '../src/assets/images/xuanya.jpeg',
+				img: this.staticSource+'images/xuanya.jpeg',
 				trendsData: initTrendsData(),
 				topicImgs: topicInit(),
 				topicWidth: topicInit().length*153+153,
@@ -144,7 +146,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.friends-trends {
 		padding-bottom: 50px;
 	}

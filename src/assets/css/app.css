@@ -1,0 +1,41 @@
+body {
+	padding-top: 25px;
+}
+.mint-header.is-fixed {
+	top: 25px !important;
+}
+.header-main-icon-group {
+	top: 25px !important;
+}
+body:before {
+	content: '';
+	position: fixed;
+	width: 100%;
+	height: 27px;
+	background: #26a2ff;
+	top: 0;
+	z-index: 4;
+}
+.song-play-bg .song-play .song-play-head, 
+.song-play .song-play .song-play-head, 
+.song-play-filter .song-play .song-play-head {
+    top: 22px;
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
+}
+.song-play-bg .song-play .song-content, 
+.song-play .song-play .song-content, 
+.song-play-filter .song-play .song-content {
+    top: 66px !important;
+}
+.status-bar {
+	content: '';
+	display: block !important;
+	position: absolute;
+	width: 100%;
+	height: 22px;
+	background-color: rgba(171,165,165,0.5);
+	top: 0;
+	z-index: 4;
+}

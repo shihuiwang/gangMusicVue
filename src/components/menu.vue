@@ -56,8 +56,8 @@
 		props: ['action'],
 		data () {
 			return {
-				bgImg: '../src/assets/images/img5.jpg',
-				headerImg: '../src/assets/images/wanglihong.jpeg'
+				bgImg: this.staticSource+'images/img5.jpg',
+				headerImg: this.staticSource+'images/wanglihong.jpeg'
 			}
 		},
 		methods: {
@@ -68,7 +68,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	#menu {
 		position: fixed;
 		top: 0;

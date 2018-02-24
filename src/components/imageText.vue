@@ -34,7 +34,7 @@ setting:{
 		props: ['imageText']
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.left-anchor {
 		border-bottom: 1px solid #ccc;
 	}

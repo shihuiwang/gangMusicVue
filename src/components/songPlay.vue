@@ -15,6 +15,7 @@
 		<div class="song-play-bg" @click="" :style="{top: player.top, opacity: player.opa, backgroundImage: 'url('+ player.currentSong.cover +')'}">
 			<div class="song-play-filter" :style="{backgroundImage: 'url('+ player.currentSong.cover +')'}"></div>
 			<div class="song-play">
+				<div class="status-bar"></div>
 				<div class="song-play-head">
 					<div class="right">
 						<i class="iconfont icon-xitongfanhui" @click="songPalyHide"></i>
@@ -71,7 +72,7 @@
 		props: ['player'],
 		data () {
 			return {
-				stickBg: '../src/assets/images/stickbg.png',
+				stickBg: this.staticSource+'images/stickbg.png',
 				allSong: this.player.songSheet,
 				mutedHandler: 'icon-laba-xianxing',
 				playWayIcon: 'icon-fanhui-yuanshijituantubiao',
@@ -150,7 +151,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.song-play-filter {
 	    -webkit-filter: blur(10px);
         -moz-filter: blur(10px);
@@ -158,7 +159,7 @@
         filter: blur(10px);	
         background-color: rgba(141, 141, 141, 0.35);
 		background-blend-mode: darken;
-		background-size: 150% !important;
+		background-repeat: no-repeat;
 	}
 	.song-play-bg, .song-play, .song-play-filter {
 		position: fixed;
@@ -344,6 +345,9 @@
 					}
 				}
 				
+			}
+			.status-bar {
+				display: none;
 			}
 		}
 	}

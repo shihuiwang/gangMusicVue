@@ -51,7 +51,7 @@
 		props: ['playesheet','currentindex'],
 		data () {
 			return {
-				stickBg: '../src/assets/images/stickbg.png',
+				stickBg: this.staticSource+'images/stickbg.png',
 				mutedHandler: 'icon-laba-xianxing',
 				playWayIcon: 'icon-fanhui-yuanshijituantubiao',
 			}
@@ -68,7 +68,7 @@
 	}
 </script>
 
-<style lang="sass">
+<style lang="scss">
 	.play-sheet-bg, .play-sheet {
 		position: fixed;
 		height: 100%;

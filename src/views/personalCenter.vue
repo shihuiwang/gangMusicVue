@@ -71,6 +71,7 @@
     </div>
 </template>
 <script>
+	import Vue from 'vue'
 	import myActionsheet from '../components/myMint/actionsheet.vue'
 	import { MessageBox } from 'mint-ui';
 
@@ -87,7 +88,7 @@
 		}
 		for(var i=0,list=[];i<imgs.length;i++){
 			var item = {
-				url: '../src/assets/images/' + imgs[i],
+				url: Vue.prototype.staticSource+'images/' + imgs[i],
 				name: names[i],
 				num: 64
 			}
@@ -103,7 +104,7 @@
 			  	if(action == 'confirm'){
 			  		if(value !='' && value !==null){
 			  			var item = {
-							url: '../src/assets/images/LUHAN.jpeg',
+							url: this.staticSource+'images/LUHAN.jpeg',
 							name: value,
 							num: 0
 						}
@@ -118,7 +119,7 @@
 			return {
 				songList: initSongSheet('new'),
 				colleList: initSongSheet('colle'),
-				imgSrc: '../src/assets/images/logo.png',
+				imgSrc: this.staticSource+'images/logo.png',
 				isOpen: true,
 				isClose: false,
 				isOpen1: true,
@@ -171,7 +172,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.ul-group {
 		width: 100%;
 		line-height: 10%;

@@ -55,7 +55,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.footer {
 		position: fixed;
 		width: 100%;

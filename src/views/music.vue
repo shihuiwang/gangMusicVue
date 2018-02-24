@@ -55,14 +55,15 @@
 		      imgs: this.imgInit(),
 		      songSheet: this.initSongSheet(),
 		      mvSheet: this.initMvSheet(),
-		      advertisementImg: '../src/assets/images/me1.jpg',
+		      advertisementImg: this.staticSource+'images/me1.jpg',
 		      textImage: this.initImageText()
 		    }
 		},
 		methods: {
 			imgInit(){
 				for (var i = 2, imgs = []; i <= 10; i++) {
-					var name = {id: i, src:'../src/assets/images/yinyue'+i+'.jpeg'}
+					//this.staticSource定义在main.js
+					var name = {id: i, src: this.staticSource+'images/yinyue'+i+'.jpeg'}
 					imgs.push(name);
 				};
 				return imgs;
@@ -77,7 +78,7 @@
 					var index = parseInt(Math.random()*4);
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						num: num,
 						title: titles[index]
 					}
@@ -98,7 +99,7 @@
 					var index = parseInt(Math.random()*4);
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						num: num,
 						title: titles[index]
 					}
@@ -120,7 +121,7 @@
 					var index = parseInt(Math.random()*3);
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						texts: [titles[index], num]
 					}
 					simData.data.push(name);
@@ -142,7 +143,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	#home {
 		padding-bottom: 50px;
 	}

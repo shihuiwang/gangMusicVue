@@ -60,13 +60,13 @@
 					var desArr = ['曾经等你下课的人，现在带你回家了吗？','《放假在家不被爸妈嫌弃攻略》','《声临其境》中，唐国强完美诠释了一个演员的自我修养','当一个活着回来的少年'];
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						num: num,
 						praiseNum: parseInt(num/99),
 						comment: parseInt(num/988),
 						uploader: uploaders[index],
 						label: labels[index],
-						uploaderPic: '../src/assets/images/' + uploaderPics[index],
+						uploaderPic: this.staticSource+'images/' + uploaderPics[index],
 						time: '03:58',
 						des: desArr[index]
 					}
@@ -96,7 +96,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.video {
 		padding-bottom: 50px;
 	}

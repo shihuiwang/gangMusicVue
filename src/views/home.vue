@@ -71,7 +71,7 @@ export default {
   }
 }
 </script>
-<style lang="sass">
+<style lang="scss">
     .flex {
         display: -webkit-flex;
         display: flex;

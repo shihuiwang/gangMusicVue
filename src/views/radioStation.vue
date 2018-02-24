@@ -38,7 +38,7 @@
 		methods: {
 			imgInit(){
 				for (var i = 4, imgs = []; i <= 10; i++) {
-					var name = {id: i, src:'../src/assets/images/yinyue'+i+'.jpeg'}
+					var name = {id: i, src:this.staticSource+'images/yinyue'+i+'.jpeg'}
 					imgs.push(name);
 				};
 				return imgs;
@@ -53,7 +53,7 @@
 					var index = parseInt(Math.random()*5);
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						num: num,
 						title: titles[index]
 					}
@@ -77,7 +77,7 @@
 					var index = parseInt(Math.random()*3);
 					var name = {
 						id: i, 
-						src:'../src/assets/images/'+imgSrc[i],
+						src:this.staticSource+'images/'+imgSrc[i],
 						texts: [titles[index], des1[index], des2[index], num]
 					}
 					simData.data.push(name);
@@ -99,7 +99,7 @@
 		}
 	}
 </script>
-<style lang="sass">
+<style lang="scss">
 	.radio-station {
 		padding-bottom: 50px;
 	}

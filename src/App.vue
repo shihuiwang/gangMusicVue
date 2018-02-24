@@ -23,11 +23,11 @@
 
 <script>
 import Vue from 'vue'
-import HeaderTab from './components/header.vue'
-import FooterNav from './components/footer.vue'
-import RightMenu from './components/menu.vue'
-import SongPlay from './components/songPlay.vue'
-import PlaySheet from './components/playSheet.vue'
+import HeaderTab from '@/components/header.vue'
+import FooterNav from '@/components/footer.vue'
+import RightMenu from '@/components/menu.vue'
+import SongPlay from '@/components/songPlay.vue'
+import PlaySheet from '@/components/playSheet.vue'
 import { Toast } from 'mint-ui';
     
     var ontimeupdate = function(_this) {
@@ -63,7 +63,7 @@ import { Toast } from 'mint-ui';
                 return;
             }
             var currentSong = _this.player.songSheet[_this.currentSongIndex];
-            var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+            var audioSrc = this.staticSource+'audio/' + currentSong.source;
             _this.player.currentSong = currentSong;
             setTimeout(() => {
                 globalAudio.src = audioSrc;
@@ -172,15 +172,27 @@ import { Toast } from 'mint-ui';
             '周冬雨 - 不完美女孩',
             '周子琰 - 全世界我最喜欢你'
         ];
+        var songerSource = [
+            '1.mp3',
+            '2.mp3',
+            '3.mp3',
+            '4.mp3',
+            '5.mp3',
+            '6.mp3',
+            '7.mp3',
+            '8.mp3',
+            '9.mp3'
+        ];
         for (var i = 0, song = []; i <= imgSrc.length-1; i++) {
             var num = Math.random()*9;
             num = parseInt(num, 10);
             var name = {
                 id: i, 
-                cover:'../src/assets/images/'+imgSrc[i],
+                cover:Vue.prototype.staticSource+'images/'+imgSrc[i],
                 num: num,
                 songer: songerName[i].split(' - ')[0],
-                name: songerName[i].split(' - ')[1]
+                name: songerName[i].split(' - ')[1],
+                source: songerSource[i]
             }
             if(i == 0) {
                 name.type = '推荐歌单';
@@ -277,13 +289,13 @@ export default {
         play(para) {
             this.playing = true;
             if(!globalAudio.src) {
-                globalAudio.src = '../src/assets/audio/'+this.player.songSheet[0].songer+' - '+this.player.songSheet[0].name+'.mp3';
+                globalAudio.src = this.staticSource+'audio/'+this.player.songSheet[0].source;
             }
             if(!isNaN(para)){
                 //如果参数为数字，则是指定播放播放列表里的对应歌曲
                 this.currentSongIndex = para;
                 var currentSong = this.player.songSheet[para];
-                var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+                var audioSrc = this.staticSource+'audio/' + currentSong.source;
                 this.player.currentSong = currentSong;
                 globalAudio.src = audioSrc;
 
@@ -329,7 +341,7 @@ export default {
             }
             else{
                 var currentSong = this.player.songSheet[this.currentSongIndex];
-                var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+                var audioSrc = this.staticSource+'audio/' + currentSong.source;
                 this.player.currentSong = currentSong;
                 setTimeout(() => {
                     globalAudio.src = audioSrc;
@@ -367,7 +379,7 @@ export default {
                 return;
             }
             var currentSong = this.player.songSheet[this.currentSongIndex];
-            var audioSrc = '../src/assets/audio/' + currentSong.songer + ' - ' + currentSong.name + '.mp3';
+            var audioSrc = this.staticSource+'audio/' + currentSong.source;
             this.player.currentSong = currentSong;
             setTimeout(() => {
                 globalAudio.src =audioSrc;
@@ -396,7 +408,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="scss">
    /*这里sass编译正常*/
     $redColor:red;
     h2{
